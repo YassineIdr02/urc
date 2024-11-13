@@ -1,12 +1,22 @@
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import MessagesHeader from "./MessagesHeader";
-import { useState } from "react";
+import ConvoHeader from "./ConvoHeader";
+import { useEffect, useState } from "react";
 
 const MessageConvo = () => {
-  const [messages, setMessages] = useState<String[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [user, setUser] = useState({
+    username: "",
+  });
 
+  const [messages, setMessages] = useState<string[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  useEffect(() => {
+    const session = sessionStorage.getItem("username");
+    if (session)
+      setUser({
+        username: session,
+      });
+  }, []);
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
       setMessages([...messages, newMessage]);
@@ -16,14 +26,13 @@ const MessageConvo = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <MessagesHeader />
+      <ConvoHeader User = {user} />
       <div className="flex-grow flex flex-col-reverse overflow-y-auto px-5">
-      <div className="chat chat-start">
-      {/* <div className="chat chat-end"> */}
-            <div className="chat-bubble">Je suis motivé</div>
-          </div>
-        {
-        messages.map((message, index) => (
+        <div className="chat chat-start">
+          {/* <div className="chat chat-end"> */}
+          <div className="chat-bubble">Je suis motivé</div>
+        </div>
+        {messages.map((message, index) => (
           <div key={index} className="chat chat-end">
             <div className="chat-bubble">{message}</div>
           </div>
@@ -37,7 +46,10 @@ const MessageConvo = () => {
           onChange={(e) => setNewMessage(e.target.value)}
           className="input input-bordered w-full"
         />
-        <button className="btn btn-ghost rounded-full text-2xl" onClick={handleSendMessage}>
+        <button
+          className="btn btn-ghost rounded-full text-2xl"
+          onClick={handleSendMessage}
+        >
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
       </div>

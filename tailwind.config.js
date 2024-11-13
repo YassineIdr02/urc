@@ -7,7 +7,7 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require('flowbite-react')
+    require('daisyui'),
   ],
 }
 

@@ -1,22 +1,25 @@
-import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
-import UserList from './components/Home/UserList';
-import  Home  from './components/Home/Home';
-
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import MessageConvo from "./components/Home/MessageConvo";
+import Inbox from "./components/Home/Inbox";
+import UserHome from "./components/Home/UserHome";
 
 function App() {
-
   return (
     <Router>
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path='/home' element={<Home />}/>
-    </Routes>
-  </Router>
-
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/inbox" element={<UserHome />}>
+          <Route path="/inbox" element={<Inbox />}>
+            <Route index element={<Navigate to="/inbox/1" replace />} />
+            <Route path=":id" element={<MessageConvo />} />
+          </Route>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

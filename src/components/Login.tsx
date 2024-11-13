@@ -19,7 +19,7 @@ const Login = () => {
                 setSession(result);
                 form.reset();
                 setError(new CustomError(""));
-                navigate('/home')
+                navigate('/inbox')
 
             }, (loginError: CustomError) => {
                 console.log(loginError);

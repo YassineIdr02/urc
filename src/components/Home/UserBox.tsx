@@ -5,6 +5,7 @@ interface UserProp {
 
 const UserBox = ({ User }: { User: UserProp }) => {
   return (
+    
     <div className="flex flex-col">
       <div className="flex flex-row justify-between p-5 w-full gap-4 z-0 hover:bg-gray-100 hover:text-gray-700 hover:cursor-pointer duration-200">
           <div className="flex flex-col justify-between">

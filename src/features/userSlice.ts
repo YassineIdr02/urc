@@ -4,7 +4,8 @@ import axios from 'axios';
 
 export interface UserProp {
     username: string,
-    last_login: string
+    last_login: string,
+    user_id: number
 }
 
 interface userState {
