@@ -3,10 +3,11 @@ import { useState } from "react";
 import {loginUser} from "../user/loginApi";
 import { Session } from "../model/common";
 import { CustomError } from "../model/CustomError";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 const Login = () => {
     const [error, setError] = useState({} as CustomError);
     const [session, setSession] = useState({} as Session);
+    const navigate = useNavigate()
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -18,6 +19,8 @@ const Login = () => {
                 setSession(result);
                 form.reset();
                 setError(new CustomError(""));
+                navigate('/home')
+
             }, (loginError: CustomError) => {
                 console.log(loginError);
                 setError(loginError);
