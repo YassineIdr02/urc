@@ -9,18 +9,16 @@ const redis = Redis.fromEnv();
 
 export default async function handler(request) {
   try {
-    // Check if the session is valid
+
     const connected = await checkSession(request);
     if (!connected) {
       console.log("Not connected");
       return unauthorizedResponse();
     }
 
-    // Parse the request body
     const body = await request.json();
     const { receiver_id, user_id } = body;
 
-    // Validate if receiver_id is provided
     if (!receiver_id) {
       return new Response("Receiver ID is required", {
         status: 400,
@@ -38,7 +36,7 @@ export default async function handler(request) {
         headers: { "content-type": "application/json" },
       });
     }
-    //const parsedMessages = messages.map((msg) => JSON.stringify(msg));
+    
     return new Response(JSON.stringify(messages), {
       status: 200,
       headers: { "content-type": "application/json" },
