@@ -8,7 +8,7 @@ export interface UserProp {
     user_id: number
 }
 
-interface userState {
+export interface userState {
     user: User,
     users: UserProp[]
 }
@@ -28,6 +28,8 @@ const config = {
 export const registerUser = createAsyncThunk("registerUser/register", async (user: any, { rejectWithValue }) => {
     try {
         const response = await axios.post("/api/register", user);
+        console.log();
+
         return response.data;
     } catch (error) {
         console.error("Failed to register:", error);
@@ -68,5 +70,9 @@ const userSlice = createSlice({
 
 
 
-export const getAllUsers = (state : {user : userState}) => state.user.users;
+export const getAllUsers = (state: { user: userState }, user_id: number) => 
+  state.user.users.filter(user => user.user_id !== user_id);
+
+export const getUser = (state: { user: userState }, user_id: number) => 
+    state.user.users.find(user => user.user_id === user_id);
 export default userSlice.reducer;

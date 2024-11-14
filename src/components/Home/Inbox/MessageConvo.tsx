@@ -1,7 +1,7 @@
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConvoHeader from "./ConvoHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import {
   getAllMessages,
@@ -18,17 +18,16 @@ const MessageConvo = () => {
   });
 
   const [newMessage, setNewMessage] = useState<Message>({
+    timestamp: Date.now(),
     sender_id: -1,
     receiver_id: -1,
     content: "",
   });
 
-  const { id } = useParams(); 
+  const { id } = useParams();
   const dispatch = useAppDispatch();
   const ConvoMessages = useAppSelector(getAllMessages);
-
-  console.log(ConvoMessages);
-  
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const session_username = sessionStorage.getItem("username");
@@ -48,6 +47,8 @@ const MessageConvo = () => {
     }
   }, [dispatch, id, user.user_id]);
 
+ 
+
   const handleSendMessage = () => {
     if (newMessage.content !== "" && id) {
       dispatch(sendMessage(newMessage));
@@ -55,6 +56,7 @@ const MessageConvo = () => {
         getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
       );
       setNewMessage({
+        timestamp: Date.now(),
         sender_id: user.user_id,
         receiver_id: parseInt(id || "-1"),
         content: "",
@@ -72,11 +74,21 @@ const MessageConvo = () => {
       });
   };
 
+  const sortedMessages = [...ConvoMessages].sort(
+    (a, b) => a.timestamp - b.timestamp
+  );
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [sortedMessages]);
+
   return (
     <div className="h-screen flex flex-col">
-      <ConvoHeader User={user} />
-      <div className="flex-grow flex flex-col-reverse overflow-y-auto px-5">
-        {ConvoMessages.map((message, index) => (
+      <ConvoHeader />
+      <div className="flex-grow flex flex-col overflow-y-auto px-5">
+        {sortedMessages.map((message, index) => (
           <div
             key={index}
             className={`chat ${

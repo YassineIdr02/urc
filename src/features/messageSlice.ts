@@ -8,7 +8,7 @@ export interface UserProp {
 }
 
 export interface Message {
-    
+    timestamp : number,
     content: string,
     sender_id: number;
     receiver_id: number;
@@ -42,7 +42,6 @@ export const sendMessage = createAsyncThunk(
     async (message: Message, { rejectWithValue }) => {
         try {
             const response = await axios.post("/api/message", message);
-            console.log(response);
             return response.data;
         } catch (error) {
             console.error("Failed to register:", error);
@@ -54,7 +53,6 @@ export const getMessagesAsync = createAsyncThunk<Message[], getMessageProp, { re
     async (body, { rejectWithValue }) => {
         try {
             const response = await axios.post<Message[]>("/api/getMessage", body, config);
-            console.log(response);
             return response.data;
         } catch (error: any) {
             console.error("Failed to fetch messages:", error);

@@ -25,24 +25,18 @@ export default async function handler(request) {
       });
     }
 
-    const messageKey1 = `messages:${user_id}:${receiver_id}`;
-    const messageKey2 = `messages:${receiver_id}:${user_id}`;
+    const messageKey = `rMessages:${user_id}:${receiver_id}`;
 
-    // Récupérer les messages pour les deux clés
-    const messages1 = await redis.lrange(messageKey1, 0, -1);
-    const messages2 = await redis.lrange(messageKey2, 0, -1);
+    const messages = await redis.lrange(messageKey, 0, -1);
 
-    // Fusionner les deux listes de messages
-    const allMessages = [...messages1, ...messages2];
-
-    if (allMessages.length === 0) {
+    if (messages.length === 0) {
       return new Response("[]", {
         status: 200,
         headers: { "content-type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify(allMessages), {
+    return new Response(JSON.stringify(messages), {
       status: 200,
       headers: { "content-type": "application/json" },
     });
