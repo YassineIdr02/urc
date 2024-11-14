@@ -40,7 +40,6 @@ export const getUsers = createAsyncThunk<UserProp[]>(
     async () => {
         try {
             const response = await axios.get<UserProp[]>("/api/users", config);
-            console.log(response);
             return response.data;
         } catch (error) {
             console.error("Failed to fetch users:", error);

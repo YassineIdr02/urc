@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { User } from "../model/common"
 import axios from 'axios';
 
 export interface UserProp {
@@ -8,10 +7,15 @@ export interface UserProp {
     user_id: number
 }
 
-export interface Message{
-    content : string,
-    sender_id : number;
-    receiver_id : number;
+export interface Message {
+    
+    content: string,
+    sender_id: number;
+    receiver_id: number;
+}
+interface getMessageProp {
+    receiver_id: number,
+    user_id: number
 }
 
 
@@ -30,47 +34,47 @@ const config = {
         "Content-Type": "application/json",
         "Authentication": `Bearer ${sessionStorage.getItem("token")}`,
     },
+
 };
 
-export const sendMessage = createAsyncThunk("sendMessage/message", async (message: Message, { rejectWithValue }) => {
-    try {
-        const response = await axios.post("/api/message", message);
-        return response.data;
-    } catch (error) {
-        console.error("Failed to register:", error);
+export const sendMessage = createAsyncThunk(
+    "sendMessage/message",
+    async (message: Message, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/message", message);
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            console.error("Failed to register:", error);
+        }
+    });
 
+export const getMessagesAsync = createAsyncThunk<Message[], getMessageProp, { rejectValue: string }>(
+    "getMessages/getmessages",
+    async (body, { rejectWithValue }) => {
+        try {
+            const response = await axios.post<Message[]>("/api/getMessage", body, config);
+            console.log(response);
+            return response.data;
+        } catch (error: any) {
+            console.error("Failed to fetch messages:", error);
+            return rejectWithValue(error.response?.data || error.message);
+        }
     }
-});
-
-// export const getUsers = createAsyncThunk<UserProp[]>(
-//     "getUsers/users",
-//     async () => {
-//         try {
-//             const response = await axios.get<UserProp[]>("/api/users", config);
-//             console.log(response);
-//             return response.data;
-//         } catch (error) {
-//             console.error("Failed to fetch users:", error);
-//             throw error;
-//         }
-//     }
-// );
-
+);
 
 const messageSlice = createSlice({
     name: "message",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        
-            // .addCase(getUsers.fulfilled, (state, action) => {
-            //     state.users = action.payload
-            // })
-
+        builder
+            .addCase(getMessagesAsync.fulfilled, (state, action) => {
+                state.messages = action.payload;
+            });
     },
 });
 
 
-
-// export const getAllUsers = (state : {user : userState}) => state.user.users;
+export const getAllMessages = (state: { message: messageState }) => state.message.messages;
 export default messageSlice.reducer;
