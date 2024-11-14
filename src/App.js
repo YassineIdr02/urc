@@ -7,12 +7,13 @@ import Inbox from "./components/Home/Inbox/Inbox";
 import UserHome from "./components/Home/UserHome";
 import RoomInbox from "./components/Home/Rooms/RoomInbox";
 import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
+import LoginLayout from "./components/Auth/LoginLayout";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LoginLayout />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<UserHome />}>
           <Route path="inbox" element={<Inbox />}>
