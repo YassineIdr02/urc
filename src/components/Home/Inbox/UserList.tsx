@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { getAllUsers, getUsers, UserProp } from "../../features/userSlice";
+import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
+import { getAllUsers, getUsers, UserProp } from "../../../features/userSlice";
 import UserBox from "./UserBox";
 import MessageListHeader from "./MessageListHeader";
 import { Link } from "react-router-dom";

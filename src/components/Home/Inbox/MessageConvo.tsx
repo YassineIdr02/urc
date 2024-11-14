@@ -28,15 +28,16 @@ const MessageConvo = () => {
     <div className="h-screen flex flex-col">
       <ConvoHeader User = {user} />
       <div className="flex-grow flex flex-col-reverse overflow-y-auto px-5">
-        <div className="chat chat-start">
-          {/* <div className="chat chat-end"> */}
-          <div className="chat-bubble">Je suis motivé</div>
-        </div>
+        
         {messages.map((message, index) => (
           <div key={index} className="chat chat-end">
             <div className="chat-bubble">{message}</div>
           </div>
         ))}
+        <div className="chat chat-start">
+          {/* <div className="chat chat-end"> */}
+          <div className="chat-bubble">Je suis motivé</div>
+        </div>
       </div>
       <div className="items-center p-4 flex flex-row gap-4 justify-between">
         <input

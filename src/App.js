@@ -2,8 +2,8 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import MessageConvo from "./components/Home/MessageConvo";
-import Inbox from "./components/Home/Inbox";
+import MessageConvo from "./components/Home/Inbox/MessageConvo";
+import Inbox from "./components/Home/Inbox/Inbox";
 import UserHome from "./components/Home/UserHome";
 
 function App() {
