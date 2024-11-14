@@ -27,7 +27,7 @@ const UserList = () => {
       <MessageListHeader />
       <div className="flex flex-col flex-grow overflow-y-auto shadow">
         {Users.map((user: UserProp, index) => (
-          <Link to={`/inbox/${user.user_id}`} key={index}>
+          <Link to={`/home/inbox/${user.user_id}`} key={index}>
             <UserBox User={user} />
           </Link>
         ))}

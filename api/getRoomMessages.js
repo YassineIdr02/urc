@@ -16,7 +16,7 @@ export default async function handler(request) {
     }
 
     const body = await request.json();
-    const { receiver_id, user_id } = body;
+    const { receiver_id } = body;
 
     if (!receiver_id) {
       return new Response("Receiver ID is required", {
@@ -25,18 +25,25 @@ export default async function handler(request) {
       });
     }
 
-    const messageKey = `rMessages:${user_id}:${receiver_id}`;
+    // Rechercher toutes les clés ayant le receiver_id spécifié
+    const keysPattern = `rMessages:*:${receiver_id}`;
+    const messageKeys = await redis.keys(keysPattern);
 
-    const messages = await redis.lrange(messageKey, 0, -1);
+    // Récupérer les messages pour chaque clé trouvée
+    const messagesPromises = messageKeys.map(key => redis.lrange(key, 0, -1));
+    const messagesArrays = await Promise.all(messagesPromises);
 
-    if (messages.length === 0) {
+    // Fusionner tous les messages dans une seule liste
+    const allMessages = messagesArrays.flat();
+
+    if (allMessages.length === 0) {
       return new Response("[]", {
         status: 200,
         headers: { "content-type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify(messages), {
+    return new Response(JSON.stringify(allMessages), {
       status: 200,
       headers: { "content-type": "application/json" },
     });

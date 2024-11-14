@@ -21,12 +21,14 @@ interface getMessageProp {
 
 interface messageState {
     message: Message,
-    messages: Message[]
+    messages: Message[],
+    roomMessages: Message[]
 }
 
 const initialState: messageState = {
     message: {} as Message,
-    messages: []
+    messages: [],
+    roomMessages: []
 };
 
 const config = {
@@ -41,18 +43,44 @@ export const sendMessage = createAsyncThunk(
     "sendMessage/message",
     async (message: Message, { rejectWithValue }) => {
         try {
-            const response = await axios.post("/api/message", message);
+            const response = await axios.post("/api/message", message, config);
             return response.data;
         } catch (error) {
             console.error("Failed to register:", error);
         }
-    });
+    }
+);
+
+export const sendRoomMessage = createAsyncThunk(
+    "sendMessage/message",
+    async (message: Message, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/roomMessages", message, config);
+            return response.data;
+        } catch (error) {
+            console.error("Failed to register:", error);
+        }
+    }
+);
 
 export const getMessagesAsync = createAsyncThunk<Message[], getMessageProp, { rejectValue: string }>(
     "getMessages/getmessages",
     async (body, { rejectWithValue }) => {
         try {
             const response = await axios.post<Message[]>("/api/getMessage", body, config);
+            return response.data;
+        } catch (error: any) {
+            console.error("Failed to fetch messages:", error);
+            return rejectWithValue(error.response?.data || error.message);
+        }
+    }
+);
+
+export const getRoomMessagesAsync = createAsyncThunk<Message[], getMessageProp, { rejectValue: string }>(
+    "getRoomMessages/getRoomMessages",
+    async (body, { rejectWithValue }) => {
+        try {
+            const response = await axios.post<Message[]>("/api/getRoomMessages", body, config);
             return response.data;
         } catch (error: any) {
             console.error("Failed to fetch messages:", error);
@@ -69,10 +97,14 @@ const messageSlice = createSlice({
         builder
             .addCase(getMessagesAsync.fulfilled, (state, action) => {
                 state.messages = action.payload;
+            })
+            .addCase(getRoomMessagesAsync.fulfilled, (state, action) => {
+                state.roomMessages = action.payload;
             });
     },
 });
 
 
 export const getAllMessages = (state: { message: messageState }) => state.message.messages;
+export const getAllRoomMessages = (state: { message: messageState }) => state.message.roomMessages;
 export default messageSlice.reducer;

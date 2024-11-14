@@ -67,7 +67,7 @@ const Sidebar = ({User} : any) => {
               animate={AnimationVariants.animate(2)}
             >
               <Link
-                to={"/salons"}
+                to={"/home/rooms"}
                 className="flex flex-row rounded-lg w-full px-4 py-2  items-center justify-between hover:bg-gray-100 hover:text-gray-700 text-gray-500 gap-2 duration-200 "
               >
                 <button className="  flex flex-row items-center gap-2 ">

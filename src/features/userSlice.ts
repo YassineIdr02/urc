@@ -75,4 +75,5 @@ export const getAllUsers = (state: { user: userState }, user_id: number) =>
 
 export const getUser = (state: { user: userState }, user_id: number) => 
     state.user.users.find(user => user.user_id === user_id);
+
 export default userSlice.reducer;

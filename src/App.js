@@ -5,6 +5,8 @@ import Register from "./components/Register";
 import MessageConvo from "./components/Home/Inbox/MessageConvo";
 import Inbox from "./components/Home/Inbox/Inbox";
 import UserHome from "./components/Home/UserHome";
+import RoomInbox from "./components/Home/Rooms/RoomInbox";
+import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
 
 function App() {
   return (
@@ -12,12 +14,18 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/inbox" element={<UserHome />}>
-          <Route path="/inbox" element={<Inbox />}>
+        <Route path="/home" element={<UserHome />}>
+          <Route path="inbox" element={<Inbox />}>
             <Route index element={<Navigate to="/inbox/1" replace />} />
             <Route path=":id" element={<MessageConvo />} />
           </Route>
+
+          <Route path="rooms" element={<RoomInbox />}>
+            <Route index element={<Navigate to="1" replace />} />
+            <Route path=":idRoom" element={<RoomMessageConvo />} />
+          </Route>
         </Route>
+        
       </Routes>
     </Router>
   );
