@@ -6,6 +6,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 
+
 const NewLogin = () => {
   const [showLogin, setLogin] = useState(false);
   const [showSignup, setSignup] = useState(false);
@@ -31,11 +32,12 @@ const NewLogin = () => {
       transition={{ duration: 2, type:"spring", stiffness:300 }}
     >
       <div className="flex flex-col gap-5">
-        <div className="h-7 rounded-full">
-
+        <div className="h-20 rounded-full">
+          <img src={"https://www.tech-brest-iroise.fr/preview/1427/w960q100bFFFFFFm/51866_UBO_Hor_Noir_vecto.png"} alt="" className="object-contain w-full h-full" />
         </div>
 
-        <h1 className="text-center text-2xl font-bold">Welcome to ProEx</h1>
+
+        <h1 className="text-center text-2xl font-bold">Welcome to UCR</h1>
         {showInitials && (
           <InitialButtons
             showLoginForm={showLoginForm}

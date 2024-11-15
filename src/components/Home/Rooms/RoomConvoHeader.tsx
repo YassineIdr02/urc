@@ -1,6 +1,4 @@
-import userEvent from "@testing-library/user-event";
 import { useAppSelector } from "../../../hooks/hooks";
-import { getUser, userState } from "../../../features/userSlice";
 import { useParams } from "react-router-dom";
 import { getRoom, RoomProp, roomState } from "../../../features/roomSlice";
 

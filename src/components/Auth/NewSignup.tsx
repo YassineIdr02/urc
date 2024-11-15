@@ -40,7 +40,7 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm }) => {
   };
   return (
     <form action="" onSubmit={handleSubmit} className="flex flex-col gap-2 justify-center">
-      <p className="text-center">Join ProEx, Unlock Possibilities Together</p>
+      <p className="text-center">Join UCR, don`t miss out on the fun</p>
       
       <input
         autoComplete="false"

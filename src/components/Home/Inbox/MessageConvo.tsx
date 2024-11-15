@@ -27,6 +27,7 @@ const MessageConvo = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const ConvoMessages = useAppSelector(getAllMessages);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,9 +51,6 @@ const MessageConvo = () => {
   const handleSendMessage = () => {
     if (newMessage.content !== "" && id) {
       dispatch(sendMessage(newMessage));
-      dispatch(
-        getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
-      );
       setNewMessage({
         timestamp: Date.now(),
         sender_id: user.user_id,
@@ -71,6 +69,7 @@ const MessageConvo = () => {
         sender_id: user.user_id,
       });
   };
+
 
   const sortedMessages = [...ConvoMessages].sort(
     (a, b) => a.timestamp - b.timestamp
@@ -99,6 +98,8 @@ const MessageConvo = () => {
               }`}
             >
               <div className="chat-bubble">{message.content}</div>
+
+              {index === sortedMessages.length - 1 && <div ref={scrollRef} />}
             </div>
           ))
         )}

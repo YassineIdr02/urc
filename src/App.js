@@ -1,5 +1,10 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import MessageConvo from "./components/Home/Inbox/MessageConvo";
@@ -10,6 +15,14 @@ import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
 import LoginLayout from "./components/Auth/LoginLayout";
 
 function App() {
+  window.Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      console.log("Notifications are enabled.");
+    } else {
+      console.log("Notifications are disabled.");
+    }
+  });
+
   return (
     <Router>
       <Routes>
@@ -26,7 +39,6 @@ function App() {
             <Route path=":idRoom" element={<RoomMessageConvo />} />
           </Route>
         </Route>
-        
       </Routes>
     </Router>
   );
