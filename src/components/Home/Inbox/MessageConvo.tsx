@@ -10,6 +10,7 @@ import {
   sendMessage,
 } from "../../../features/messageSlice";
 import { useParams } from "react-router-dom";
+import { getUser, userState } from "../../../features/userSlice";
 
 const MessageConvo = () => {
   const [user, setUser] = useState({
@@ -22,11 +23,17 @@ const MessageConvo = () => {
     sender_id: -1,
     receiver_id: -1,
     content: "",
+    room_external_id : [],
+    receiver_external_id : -1
   });
 
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const userId = id ? parseInt(id) : parseInt("-1");
   const dispatch = useAppDispatch();
   const ConvoMessages = useAppSelector(getAllMessages);
+  const User = useAppSelector((state: { user: userState }) =>
+    getUser(state, userId)
+);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -55,8 +62,15 @@ const MessageConvo = () => {
         timestamp: Date.now(),
         sender_id: user.user_id,
         receiver_id: parseInt(id || "-1"),
+        receiver_external_id : -1,
+        room_external_id : [],
         content: "",
       });
+      if (id && user.user_id !== -1) {
+        dispatch(
+          getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
+        );
+      }
     }
   };
 
@@ -67,9 +81,9 @@ const MessageConvo = () => {
         content: e.target.value,
         receiver_id: parseInt(id),
         sender_id: user.user_id,
+        receiver_external_id : User?.external_id || -1
       });
   };
-
 
   const sortedMessages = [...ConvoMessages].sort(
     (a, b) => a.timestamp - b.timestamp

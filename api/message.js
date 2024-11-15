@@ -1,26 +1,24 @@
 import { getConnecterUser, triggerNotConnected } from "../lib/session";
-import { Redis } from '@upstash/redis';
-
-export const config = {
-  runtime: 'edge',
-};
-
+import { Redis } from "@upstash/redis";
+const PushNotifications = require("@pusher/push-notifications-server");
 const redis = Redis.fromEnv();
 
-export default async (request) => {
+export default async (request, response) => {
   try {
-    
+    const headers = new Headers(request.headers);
+    const user = await getConnecterUser(request);
 
-    const { receiver_id, content, sender_id } = await request.json(); 
+    if (!user) {
+      console.log("Not connected");
+      return triggerNotConnected(response);
+    }
+
+    const { receiver_id, content, sender_id, receiver_external_id } = request.body; 
 
     if (!receiver_id || !content) {
-      return new Response(
-        JSON.stringify({ error: "Receiver ID and content are required." }),
-        {
-          status: 400, 
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return response.status(400).json({
+        error: "Receiver ID and content are required.",
+      });
     }
 
     const message = {
@@ -31,24 +29,39 @@ export default async (request) => {
       timestamp: Date.now(),
     };
 
-    await redis.lpush(`messages:${message.sender_id}:${receiver_id}`, JSON.stringify(message));
+    await redis.lpush(
+      `messages:${message.sender_id}:${receiver_id}`,
+      JSON.stringify(message)
+    );
 
-    return new Response(
-      JSON.stringify(message),
+    const beamsClient = new PushNotifications({
+      instanceId: process.env.PUSHER_INSTANCE_ID,
+      secretKey: process.env.PUSHER_SECRET_KEY,
+    });
+
+    const publishResponse = await beamsClient.publishToUsers(
+      [receiver_external_id],
       {
-        status: 200, 
-        headers: { "Content-Type": "application/json" },
+        web: {
+          notification: {
+            title: user.username,
+            body: message.content,
+            ico: "https://www.univ-brest.fr/themes/custom/ubo_parent/favicon.ico",
+            deep_link:
+              `http://localhost:3000/home/inbox/${sender_id}` ,
+          },
+          data: {
+           
+          },
+        },
       }
     );
 
+    response.status(200).json(message);
   } catch (error) {
     console.error("Error saving message:", error);
-    return new Response(
-      JSON.stringify({ error: "An error occurred while saving the message." }),
-      {
-        status: 500, 
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    response.status(500).json({
+      error: "An error occurred while saving the message.",
+    });
   }
 };

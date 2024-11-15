@@ -5,7 +5,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import Login from "./components/Login";
 import Register from "./components/Register";
 import MessageConvo from "./components/Home/Inbox/MessageConvo";
 import Inbox from "./components/Home/Inbox/Inbox";
@@ -16,12 +15,10 @@ import LoginLayout from "./components/Auth/LoginLayout";
 
 function App() {
   window.Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      console.log("Notifications are enabled.");
-    } else {
-      console.log("Notifications are disabled.");
-    }
-  });
+    if (permission === 'granted') {
+      console.log("yesssssss");
+    }else console.log("nooooooo");
+});
 
   return (
     <Router>
@@ -29,8 +26,9 @@ function App() {
         <Route path="/" element={<LoginLayout />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<UserHome />}>
+
           <Route path="inbox" element={<Inbox />}>
-            <Route index element={<Navigate to="/inbox/1" replace />} />
+            <Route index element={<Navigate to="0" replace />} />
             <Route path=":id" element={<MessageConvo />} />
           </Route>
 
@@ -38,6 +36,7 @@ function App() {
             <Route index element={<Navigate to="1" replace />} />
             <Route path=":idRoom" element={<RoomMessageConvo />} />
           </Route>
+          
         </Route>
       </Routes>
     </Router>

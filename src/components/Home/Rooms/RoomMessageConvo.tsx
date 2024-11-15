@@ -10,17 +10,33 @@ import {
   sendRoomMessage,
 } from "../../../features/messageSlice";
 import { useParams } from "react-router-dom";
+import { getAllUsers, getUsers, userState } from "../../../features/userSlice";
 
 const RoomMessageConvo = () => {
   const [user, setUser] = useState({
     username: "",
     user_id: -1,
   });
+  const userId = sessionStorage.getItem("user_id")
+    ? parseInt(sessionStorage.getItem("user_id")!)
+    : -1;
+  const Users = useAppSelector((state: { user: userState }) =>
+    getAllUsers(state, userId)
+  );
+
+  useEffect(() => {
+    dispatch(getUsers());
+  }, []);
+
+  const room_external_id = Users ? Users.map((user) => user.external_id) : [];
+  console.log(room_external_id);
 
   const [newMessage, setNewMessage] = useState<Message>({
     timestamp: Date.now(),
     sender_id: -1,
     receiver_id: -1,
+    receiver_external_id: -1,
+    room_external_id: [],
     content: "",
   });
 
@@ -28,9 +44,6 @@ const RoomMessageConvo = () => {
   const dispatch = useAppDispatch();
   const ConvoMessages = useAppSelector(getAllRoomMessages);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-
-
 
   useEffect(() => {
     const session_username = sessionStorage.getItem("username");
@@ -66,6 +79,8 @@ const RoomMessageConvo = () => {
         timestamp: Date.now(),
         sender_id: user.user_id,
         receiver_id: parseInt(idRoom || "-1"),
+        receiver_external_id: -1,
+        room_external_id: [],
         content: "",
       });
     }
@@ -77,6 +92,8 @@ const RoomMessageConvo = () => {
         ...newMessage,
         content: e.target.value,
         receiver_id: parseInt(idRoom),
+        receiver_external_id: -1,
+        room_external_id,
         sender_id: user.user_id,
       });
   };
@@ -95,7 +112,7 @@ const RoomMessageConvo = () => {
     <div className="h-screen flex flex-col">
       <ConvoHeader />
       <div className="flex-grow flex flex-col overflow-y-auto px-5">
-      {sortedMessages.length === 0 ? (
+        {sortedMessages.length === 0 ? (
           <h1 className="uppercase tracking-widest text-center mt-[25%] text-gray-500">
             Pas de message pour le moment :(
           </h1>
@@ -108,6 +125,8 @@ const RoomMessageConvo = () => {
               }`}
             >
               <div className="chat-bubble">{message.content}</div>
+
+              {index === sortedMessages.length - 1 && <div ref={scrollRef} />}
             </div>
           ))
         )}

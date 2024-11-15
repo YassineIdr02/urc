@@ -4,7 +4,7 @@ import {
   faRightFromBracket,
   faUserGroup,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const AnimationVariants = {
@@ -21,8 +21,13 @@ const AnimationVariants = {
   }),
 };
 
-const Sidebar = ({User} : any) => {
-  
+const Sidebar = ({ User }: any) => {
+  const navigate = useNavigate();
+
+  const logout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
   return (
     <>
       <div className="flex h-screen flex-col justify-between border-e shadow-md bg-white w-full sticky top-0">
@@ -34,16 +39,15 @@ const Sidebar = ({User} : any) => {
             <h2 className="text-2xl font-bold sm:inline hidden ">UCR</h2>
           </div>
           <ul className="mt-6 space-y-5 text-lg font-semibold text-center">
-            
             <motion.li
               whileHover={{ scale: 1.03 }}
               variants={AnimationVariants}
               initial="initial"
               animate={AnimationVariants.animate(1)}
             >
-              <Link to={"/inbox"}>
+              <Link to={"/home/inbox"}>
                 <button className="rounded-lg w-full px-4 py-2   hover:bg-gray-100 hover:text-gray-700 text-gray-500 flex flex-row items-center gap-2 duration-200 ">
-                <FontAwesomeIcon icon={faComments} />
+                  <FontAwesomeIcon icon={faComments} />
                   <span className="hidden sm:inline">Inbox</span>
                 </button>
               </Link>
@@ -60,7 +64,7 @@ const Sidebar = ({User} : any) => {
                 className="flex flex-row rounded-lg w-full px-4 py-2  items-center justify-between hover:bg-gray-100 hover:text-gray-700 text-gray-500 gap-2 duration-200 "
               >
                 <button className="  flex flex-row items-center gap-2 ">
-                <FontAwesomeIcon icon={faUserGroup} />
+                  <FontAwesomeIcon icon={faUserGroup} />
                   <span className="hidden sm:inline">Salon</span>
                 </button>
                 {/* <div className="badge bg-gray-200  ">100</div> */}
@@ -73,28 +77,25 @@ const Sidebar = ({User} : any) => {
               initial="initial"
               animate={AnimationVariants.animate(5)}
             >
-              <Link to={"/"}>
-                <button className="rounded-lg  w-full px-4 py-2   hover:bg-gray-100 hover:text-gray-700 text-gray-500 flex flex-row items-center gap-2 ">
-                  <FontAwesomeIcon icon={faRightFromBracket} />{" "}
-                  <span className="hidden sm:inline"> Logout</span>
-                </button>
-              </Link>
+              <button
+                onClick={logout}
+                className="rounded-lg  w-full px-4 py-2   hover:bg-gray-100 hover:text-gray-700 text-gray-500 flex flex-row items-center gap-2 "
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />{" "}
+                <span className="hidden sm:inline"> Logout</span>
+              </button>
             </motion.li>
           </ul>
         </div>
 
         <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 flex justify-between items-center p-5 lg:flex-row  sm:flex-col xs:flex-col sm:gap-6 xs:gap-3">
           <div className="flex items-center gap-2 bg-white hover:bg-gray-50">
-              <p className="text-lg  hidden sm:inline ">
-                <strong className="block font-semibold">{User.username}</strong>
-              </p>
-
+            <p className="text-lg  hidden sm:inline ">
+              <strong className="block font-semibold">{User.username}</strong>
+            </p>
           </div>
-          
         </div>
       </div>
-
-      
     </>
   );
 };

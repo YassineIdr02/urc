@@ -1,17 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { store } from './store/store';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { store } from "./store/store";
+import PusherClient from "./components/Notifications/PusherClient";
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <PusherClient>
+        <App />
+      </PusherClient>
     </Provider>
   </React.StrictMode>
 );
