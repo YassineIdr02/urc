@@ -47,8 +47,6 @@ const MessageConvo = () => {
     }
   }, [dispatch, id, user.user_id]);
 
- 
-
   const handleSendMessage = () => {
     if (newMessage.content !== "" && id) {
       dispatch(sendMessage(newMessage));
@@ -88,16 +86,22 @@ const MessageConvo = () => {
     <div className="h-screen flex flex-col">
       <ConvoHeader />
       <div className="flex-grow flex flex-col overflow-y-auto px-5">
-        {sortedMessages.map((message, index) => (
-          <div
-            key={index}
-            className={`chat ${
-              message.sender_id === user.user_id ? "chat-end" : "chat-start"
-            }`}
-          >
-            <div className="chat-bubble">{message.content}</div>
-          </div>
-        ))}
+        {sortedMessages.length === 0 ? (
+          <h1 className="uppercase tracking-widest text-center mt-[25%] text-gray-500">
+            Pas de message pour le moment :(
+          </h1>
+        ) : (
+          sortedMessages.map((message, index) => (
+            <div
+              key={index}
+              className={`chat ${
+                message.sender_id === user.user_id ? "chat-end" : "chat-start"
+              }`}
+            >
+              <div className="chat-bubble">{message.content}</div>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="items-center p-4 flex flex-row gap-4 justify-between">

@@ -15,11 +15,13 @@ const RoomList = () => {
   return (
     <div className="flex flex-col h-screen">
       <MessageListHeader />
-      <div className="flex flex-col flex-grow overflow-y-auto shadow">
+      <div className="flex flex-col flex-grow overflow-y-auto shadow gap-3 mt-5">
         {Rooms.map((room: RoomProp, index) => (
           <Link to={`/home/rooms/${room.room_id}`} key={index}>
             <UserBox Room={room} />
+            <div className="divider w-[80%] my-0 mx-auto opacity-30"></div>
           </Link>
+
         ))}
       </div>
     </div>

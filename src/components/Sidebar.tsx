@@ -32,8 +32,6 @@ const AnimationVariants = {
 
 const Sidebar = ({User} : any) => {
   
-
-  
   return (
     <>
       <div className="flex h-screen flex-col justify-between border-e shadow-md bg-white w-full sticky top-0">
