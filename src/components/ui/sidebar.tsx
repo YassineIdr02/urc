@@ -1,206 +1,103 @@
-import { cn } from "../../libs/utils";
-import {Link,LinkProps } from "react-router-dom";
-import React, { useState, createContext, useContext } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faComments,
+  faRightFromBracket,
+  faUserGroup,
+} from "@fortawesome/free-solid-svg-icons";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
-interface Links {
-  label: string;
-  href: string;
-  icon: React.JSX.Element | React.ReactNode;
-}
-
-interface SidebarContextProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  animate: boolean;
-}
-
-const SidebarContext = createContext<SidebarContextProps | undefined>(
-  undefined
-);
-
-export const useSidebar = () => {
-  const context = useContext(SidebarContext);
-  if (!context) {
-    throw new Error("useSidebar must be used within a SidebarProvider");
-  }
-  return context;
+const AnimationVariants = {
+  initial: {
+    opacity: 0,
+    y: 20,
+  },
+  animate: (d: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.1 * d,
+    },
+  }),
 };
 
-export const SidebarProvider = ({
-  children,
-  open: openProp,
-  setOpen: setOpenProp,
-  animate = true,
-}: {
-  children: React.ReactNode;
-  open?: boolean;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  animate?: boolean;
-}) => {
-  const [openState, setOpenState] = useState(false);
+const Sidebar = ({ User }: any) => {
+  const navigate = useNavigate();
 
-  const open = openProp !== undefined ? openProp : openState;
-  const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
-
-  return (
-    <SidebarContext.Provider value={{ open, setOpen, animate: animate }}>
-      {children}
-    </SidebarContext.Provider>
-  );
-};
-
-export const Sidebar = ({
-  children,
-  open,
-  setOpen,
-  animate,
-}: {
-  children: React.ReactNode;
-  open?: boolean;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-  animate?: boolean;
-}) => {
-  return (
-    <SidebarProvider open={open} setOpen={setOpen} animate={animate}>
-      {children}
-    </SidebarProvider>
-  );
-};
-
-export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
+  const logout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
   return (
     <>
-      <DesktopSidebar {...props} />
-      <MobileSidebar {...(props as React.ComponentProps<"div">)} />
-    </>
-  );
-};
-
-export const DesktopSidebar = ({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof motion.div>) => {
-  const { open, setOpen, animate } = useSidebar();
-  return (
-    <>
-      <motion.div
-        className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
-          className
-        )}
-        animate={{
-          width: animate ? (open ? "300px" : "60px") : "300px",
-        }}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        {...props}
-      >
-        {children}
-      </motion.div>
-    </>
-  );
-};
-
-export const MobileSidebar = ({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"div">) => {
-  const { open, setOpen } = useSidebar();
-  return (
-    <>
-      <div
-        className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
-        )}
-        {...props}
-      >
-        <div
-          className="flex justify-end z-20 w-full"
-          role="button"
-          tabIndex={0}
-          onClick={() => setOpen(!open)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              setOpen(!open);
-            }
-          }}
-        >
-          <IconMenu2
-            className="text-neutral-800 dark:text-neutral-200"
-            
-          />
-        </div>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-              }}
-              className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
-                className
-              )}
+      <div className="flex h-screen flex-col justify-between border-e shadow-md bg-white w-full sticky top-0">
+        <div className="px-4 py-6">
+          <div className="flex items-center">
+            <div className="h-7 rounded-full mx-4">
+              {/* <img src={logo} alt="" className="object-contain w-full h-full" /> */}
+            </div>
+            <h2 className="text-2xl font-bold sm:inline hidden ">UCR</h2>
+          </div>
+          <ul className="mt-6 space-y-5 text-lg font-semibold text-center">
+            <motion.li
+              whileHover={{ scale: 1.03 }}
+              variants={AnimationVariants}
+              initial="initial"
+              animate={AnimationVariants.animate(1)}
             >
-              <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200"
-                role="button"
-          tabIndex={0}
-                onClick={() => setOpen(!open)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      setOpen(!open);
-                    }
-                  }}
+              <Link to={"/home/inbox"}>
+                <button className="rounded-lg w-full px-4 py-2   hover:bg-gray-100 hover:text-gray-700 text-gray-500 flex flex-row items-center gap-2 duration-200 ">
+                  <FontAwesomeIcon icon={faComments} />
+                  <span className="hidden sm:inline">Inbox</span>
+                </button>
+              </Link>
+            </motion.li>
+
+            <motion.li
+              whileHover={{ scale: 1.03 }}
+              variants={AnimationVariants}
+              initial="initial"
+              animate={AnimationVariants.animate(2)}
+            >
+              <Link
+                to={"/home/rooms"}
+                className="flex flex-row rounded-lg w-full px-4 py-2  items-center justify-between hover:bg-gray-100 hover:text-gray-700 text-gray-500 gap-2 duration-200 "
               >
-                <IconX />
-              </div>
-              {children}
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <button className="  flex flex-row items-center gap-2 ">
+                  <FontAwesomeIcon icon={faUserGroup} />
+                  <span className="hidden sm:inline">Salon</span>
+                </button>
+                {/* <div className="badge bg-gray-200  ">100</div> */}
+              </Link>
+            </motion.li>
+
+            <motion.li
+              whileHover={{ scale: 1.03 }}
+              variants={AnimationVariants}
+              initial="initial"
+              animate={AnimationVariants.animate(5)}
+            >
+              <button
+                onClick={logout}
+                className="rounded-lg  w-full px-4 py-2   hover:bg-gray-100 hover:text-gray-700 text-gray-500 flex flex-row items-center gap-2 "
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />{" "}
+                <span className="hidden sm:inline"> Logout</span>
+              </button>
+            </motion.li>
+          </ul>
+        </div>
+
+        <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 flex justify-between items-center p-5 lg:flex-row  sm:flex-col xs:flex-col sm:gap-6 xs:gap-3">
+          <div className="flex items-center gap-2 bg-white hover:bg-gray-50">
+            <p className="text-lg  hidden sm:inline ">
+              <strong className="block font-semibold">{User.username}</strong>
+            </p>
+          </div>
+        </div>
       </div>
     </>
   );
 };
 
-export const SidebarLink = ({
-  link,
-  className,
-  ...props
-}: {
-  link: Links;
-  className?: string;
-  props?: LinkProps;
-}) => {
-  const { open, animate } = useSidebar();
-  return (
-    <Link
-      to={link.href}
-      className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
-        className
-      )}
-      {...props}
-    >
-      {link.icon}
-
-      <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
-      >
-        {link.label}
-      </motion.span>
-    </Link>
-  );
-};
+export default Sidebar;

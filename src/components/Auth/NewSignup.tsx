@@ -2,15 +2,18 @@ import { useState, ChangeEvent, useRef, FormEvent } from "react";
 import { useAppDispatch } from "../../hooks/hooks";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../features/userSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { unwrapResult } from "@reduxjs/toolkit";
 
 interface NewSignupProps {
   showLoginForm: () => void;
+  notify : () => void;
 }
 
-const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm }) => {
+const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm, notify }) => {
   const dispatch = useAppDispatch();
   const userRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
   const [user, setInfo] = useState({
     username: "",
     password: "",
@@ -27,16 +30,27 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+  
+    try {
+      const resultAction = await dispatch(registerUser(user));
+      const { statusText } = unwrapResult(resultAction);
+  
+      notify()
 
-    dispatch(registerUser(user));
-
+      setTimeout(() => {
+        showLoginForm();
+      }, 4000);
+    } catch (error: any) {
+      toast.error(error || "Failed to register user");
+    }
+  
     setInfo({
       username: "",
       password: "",
       email: "",
     });
-
-    showLoginForm()
+  
+   
   };
   return (
     <form action="" onSubmit={handleSubmit} className="flex flex-col gap-2 justify-center">
@@ -76,6 +90,8 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm }) => {
       >
         Sign up
       </button>
+
+      <ToastContainer theme="colored" autoClose={2000} />
     </form>
   );
 };

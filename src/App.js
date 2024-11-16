@@ -5,7 +5,6 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import Register from "./components/Register";
 import MessageConvo from "./components/Home/Inbox/MessageConvo";
 import Inbox from "./components/Home/Inbox/Inbox";
 import UserLayout from "./Layouts/UserLayout";
@@ -24,7 +23,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginLayout />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/home" element={<UserLayout />}>
 
           <Route path="inbox" element={<Inbox />}>

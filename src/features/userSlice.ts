@@ -26,17 +26,18 @@ const config = {
     },
 };
 
-export const registerUser = createAsyncThunk("registerUser/register", async (user: any, { rejectWithValue }) => {
-    try {
+export const registerUser = createAsyncThunk(
+    "registerUser/register",
+    async (user: any, { rejectWithValue }) => {
+      try {
         const response = await axios.post("/api/register", user);
-        console.log();
-
-        return response.data;
-    } catch (error) {
-        console.error("Failed to register:", error);
-
+        return { data: response.data, statusText: response.statusText };
+      } catch (error: any) {
+        return rejectWithValue(error.response?.statusText || "Failed to register");
+      }
     }
-});
+  );
+  
 
 export const getUsers = createAsyncThunk<UserProp[]>(
     "getUsers/users",
@@ -59,8 +60,7 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(registerUser.fulfilled, (state, action) => {
-                state.user.username = action.payload.username;
-                state.user.email = action.payload.email;
+                state.user = action.payload.data;
             })
             .addCase(getUsers.fulfilled, (state, action) => {
                 state.users = action.payload

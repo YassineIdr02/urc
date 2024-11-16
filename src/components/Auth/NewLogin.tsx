@@ -4,6 +4,8 @@ import NewLoginForm from "./NewLoginForm";
 import NewSignup from "./NewSignup";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 
@@ -23,6 +25,8 @@ const NewLogin = () => {
     setLogin(false);
     setInitials(false);
   };
+
+  const notify = () => toast.success("User created successfully")
 
   return (
     <motion.article
@@ -44,9 +48,10 @@ const NewLogin = () => {
             showSignupForm={showSignupForm}
           />
         )}
-        {showSignup && <NewSignup showLoginForm={showLoginForm} />}
+        {showSignup && <NewSignup showLoginForm={showLoginForm} notify={notify} />}
         {showLogin && <NewLoginForm />}
       </div>
+      <ToastContainer theme="colored" />
     </motion.article>
   );
 };
