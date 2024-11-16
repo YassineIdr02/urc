@@ -40,7 +40,7 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm }) => {
   };
   return (
     <form action="" onSubmit={handleSubmit} className="flex flex-col gap-2 justify-center">
-      <p className="text-center">Join UCR, don`t miss out on the fun</p>
+      <p className="text-center">Join UBO Chat Relay</p>
       
       <input
         autoComplete="false"

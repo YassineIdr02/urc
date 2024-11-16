@@ -8,24 +8,24 @@ import {
 import Register from "./components/Register";
 import MessageConvo from "./components/Home/Inbox/MessageConvo";
 import Inbox from "./components/Home/Inbox/Inbox";
-import UserHome from "./components/Home/UserHome";
+import UserLayout from "./Layouts/UserLayout";
 import RoomInbox from "./components/Home/Rooms/RoomInbox";
 import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
-import LoginLayout from "./components/Auth/LoginLayout";
+import LoginLayout from "./Layouts/LoginLayout";
 
 function App() {
   window.Notification.requestPermission().then((permission) => {
     if (permission === 'granted') {
-      console.log("yesssssss");
-    }else console.log("nooooooo");
-});
+      // OK
+    }
+  })
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginLayout />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<UserHome />}>
+        <Route path="/home" element={<UserLayout />}>
 
           <Route path="inbox" element={<Inbox />}>
             <Route index element={<Navigate to="0" replace />} />
@@ -36,7 +36,7 @@ function App() {
             <Route index element={<Navigate to="1" replace />} />
             <Route path=":idRoom" element={<RoomMessageConvo />} />
           </Route>
-          
+
         </Route>
       </Routes>
     </Router>

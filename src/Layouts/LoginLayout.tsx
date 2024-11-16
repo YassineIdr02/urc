@@ -1,4 +1,4 @@
-import NewLogin from "./NewLogin";
+import NewLogin from "../components/Auth/NewLogin";
 
 const LoginLayout = () => {
   document.title = "UCR | Login"

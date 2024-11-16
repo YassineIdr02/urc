@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../Sidebar";
+import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 
-const UserHome = () => {
+const UserLayout = () => {
     const [user, setUser] = useState({
         username : "" 
       })
@@ -26,4 +26,4 @@ const UserHome = () => {
   );
 };
 
-export default UserHome;
+export default UserLayout;
