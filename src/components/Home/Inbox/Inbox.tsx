@@ -1,6 +1,4 @@
-import React from 'react'
 import UserList from './UserList'
-import MessageConvo from './MessageConvo'
 import { Outlet } from 'react-router-dom'
 
 const Inbox = () => {

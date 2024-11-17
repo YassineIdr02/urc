@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, useRef, FormEvent } from "react";
 import { useAppDispatch } from "../../hooks/hooks";
-import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../features/userSlice";
+
+import { registerUser, RegisterUserProp } from "../../features/userSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -14,7 +14,7 @@ interface NewSignupProps {
 const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm, notify }) => {
   const dispatch = useAppDispatch();
   const userRef = useRef<HTMLInputElement>(null);
-  const [user, setInfo] = useState({
+  const [user, setInfo] = useState<RegisterUserProp>({
     username: "",
     password: "",
     email: "",
@@ -34,14 +34,19 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm, notify }) => {
     try {
       const resultAction = await dispatch(registerUser(user));
       const { statusText } = unwrapResult(resultAction);
+      console.log(statusText);
   
       notify()
 
       setTimeout(() => {
         showLoginForm();
       }, 4000);
-    } catch (error: any) {
-      toast.error(error || "Failed to register user");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to register user");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   
     setInfo({

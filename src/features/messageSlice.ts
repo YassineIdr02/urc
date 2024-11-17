@@ -12,8 +12,8 @@ export interface Message {
   content: string;
   sender_id: number;
   receiver_id: number;
-  receiver_external_id : number;
-  room_external_id : number[];
+  receiver_external_id: number;
+  room_external_id: number[];
 }
 
 interface getMessageProp {
@@ -40,6 +40,14 @@ const config = {
   },
 };
 
+// Helper function to extract error message
+const extractErrorMessage = (error: unknown): string => {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data || error.message;
+  }
+  return String(error);
+};
+
 // Thunks for handling messages
 export const sendMessage = createAsyncThunk(
   "sendMessage/message",
@@ -47,9 +55,9 @@ export const sendMessage = createAsyncThunk(
     try {
       const response = await axios.post("/api/message", message, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send message:", error);
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(extractErrorMessage(error));
     }
   }
 );
@@ -60,9 +68,9 @@ export const sendRoomMessage = createAsyncThunk(
     try {
       const response = await axios.post("/api/roomMessages", message, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send room message:", error);
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(extractErrorMessage(error));
     }
   }
 );
@@ -73,9 +81,9 @@ export const getMessagesAsync = createAsyncThunk<Message[], getMessageProp>(
     try {
       const response = await axios.post<Message[]>("/api/getMessage", body, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to fetch messages:", error);
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(extractErrorMessage(error));
     }
   }
 );
@@ -86,9 +94,9 @@ export const getRoomMessagesAsync = createAsyncThunk<Message[], getMessageProp>(
     try {
       const response = await axios.post<Message[]>("/api/getRoomMessages", body, config);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to fetch room messages:", error);
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(extractErrorMessage(error));
     }
   }
 );

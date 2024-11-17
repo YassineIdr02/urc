@@ -1,6 +1,6 @@
 import { useAppSelector } from "../../../hooks/hooks";
 import { useParams } from "react-router-dom";
-import { getRoom, RoomProp, roomState } from "../../../features/roomSlice";
+import { getRoom, roomState } from "../../../features/roomSlice";
 
 const ConvoHeader = () => {
   const { idRoom } = useParams<{ idRoom: string }>();

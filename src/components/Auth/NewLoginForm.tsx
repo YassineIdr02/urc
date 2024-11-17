@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import  { useState, ChangeEvent } from "react";
+import  { useState } from "react";
 import React from 'react'
 import { useNavigate } from "react-router-dom";
 import { CustomError } from "../../model/CustomError";
@@ -11,6 +10,8 @@ const NewLoginForm = () => {
   const [error, setError] = useState({} as CustomError);
   const [session, setSession] = useState({} as Session);
   const navigate = useNavigate()
+  console.log({error, session});
+  
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();

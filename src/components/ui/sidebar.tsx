@@ -21,7 +21,7 @@ const AnimationVariants = {
   }),
 };
 
-const Sidebar = ({ User }: any) => {
+const Sidebar = ( { username }: { username: string }) => {
   const navigate = useNavigate();
 
   const logout = () => {
@@ -91,7 +91,7 @@ const Sidebar = ({ User }: any) => {
         <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 flex justify-between items-center p-5 lg:flex-row  sm:flex-col xs:flex-col sm:gap-6 xs:gap-3">
           <div className="flex items-center gap-2 bg-white hover:bg-gray-50">
             <p className="text-lg  hidden sm:inline ">
-              <strong className="block font-semibold">{User.username}</strong>
+              <strong className="block font-semibold">{username}</strong>
             </p>
           </div>
         </div>

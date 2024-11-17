@@ -9,6 +9,12 @@ export interface UserProp {
     external_id: number
 }
 
+export interface RegisterUserProp {
+    username: string,
+    email: string,
+    password: string
+}
+
 export interface userState {
     user: User,
     users: UserProp[]
@@ -28,12 +34,16 @@ const config = {
 
 export const registerUser = createAsyncThunk(
     "registerUser/register",
-    async (user: any, { rejectWithValue }) => {
+    async (user: RegisterUserProp, { rejectWithValue }) => {
       try {
         const response = await axios.post("/api/register", user);
         return { data: response.data, statusText: response.statusText };
-      } catch (error: any) {
-        return rejectWithValue(error.response?.statusText || "Failed to register");
+      } catch (error) {
+        // Ensure error is an AxiosError and safely access properties
+        if (axios.isAxiosError(error)) {
+          return rejectWithValue(error.response?.statusText || "Failed to register");
+        }
+        return rejectWithValue("An unexpected error occurred");
       }
     }
   );

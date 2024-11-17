@@ -1,5 +1,3 @@
-import React from 'react'
-import MessageConvo from './RoomMessageConvo'
 import { Outlet } from 'react-router-dom'
 import RoomList from './RoomList'
 

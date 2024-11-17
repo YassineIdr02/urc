@@ -12,9 +12,8 @@ import { Link } from "react-router-dom";
 
 const UserList = () => {
   const dispatch = useAppDispatch();
-  const userId = sessionStorage.getItem("user_id")
-    ? parseInt(sessionStorage.getItem("user_id")!)
-    : -1;
+  const Id = sessionStorage.getItem("user_id");
+  const userId = Id ? parseInt(Id) : -1;
   const Users = useAppSelector((state: { user: userState }) =>
     getAllUsers(state, userId)
   );
@@ -27,11 +26,11 @@ const UserList = () => {
     const dateA = a.last_login ? new Date(a.last_login).getTime() : 0;
     const dateB = b.last_login ? new Date(b.last_login).getTime() : 0;
   
-    if (!a.last_login && !b.last_login) return 0; // Both are null
-    if (!a.last_login) return 1; // Null last_login should appear later
-    if (!b.last_login) return -1; // Null last_login should appear later
+    if (!a.last_login && !b.last_login) return 0; 
+    if (!a.last_login) return 1; 
+    if (!b.last_login) return -1;
   
-    return dateB - dateA; // Most recent logins first
+    return dateB - dateA; 
   });
 
   return (

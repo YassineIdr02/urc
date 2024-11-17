@@ -17,9 +17,8 @@ const RoomMessageConvo = () => {
     username: "",
     user_id: -1,
   });
-  const userId = sessionStorage.getItem("user_id")
-    ? parseInt(sessionStorage.getItem("user_id")!)
-    : -1;
+  const id = sessionStorage.getItem("user_id");
+  const userId = id ? parseInt(id) : -1;
   const Users = useAppSelector((state: { user: userState }) =>
     getAllUsers(state, userId)
   );

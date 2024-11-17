@@ -26,15 +26,16 @@ const config = {
 
 export const getRoomsAsync = createAsyncThunk<RoomProp[]>(
     "getRooms/getRooms",
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await axios.get("/api/getRooms", config);
-            return response.data;
-        } catch (error) {
-            console.error("Failed to register:", error);
-        }
+    async () => {
+      try {
+        const response = await axios.get("/api/getRooms", config);
+        return response.data;
+      } catch (error) {
+        console.error("Failed to fetch rooms:", error);
+        throw error; // Let Redux handle the rejected state
+      }
     }
-);
+  );
 
 const roomSlice = createSlice({
     name: "room",

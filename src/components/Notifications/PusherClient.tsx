@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import  { useEffect } from "react";
 import { Client } from "@pusher/push-notifications-web";
 import { configureBeams } from "../../config/beamsConfig";
 
 export const beamsClient = new Client({
     instanceId: "875e7724-b0db-4bdf-b082-54a376631128",
   });
-
-const PusherClient = ({ children } : any) => {
+  interface PusherClientProps {
+    children: React.ReactNode;
+  }
+const PusherClient = ({ children }: PusherClientProps) => {
   useEffect(() => {
     
 
