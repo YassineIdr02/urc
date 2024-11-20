@@ -36,12 +36,11 @@ const UserList = () => {
   return (
     <div className="flex flex-col h-screen">
       <MessageListHeader />
-      <div className="flex flex-col flex-grow overflow-y-auto shadow gap-3 mt-5">
+      <div className="flex flex-col flex-grow overflow-y-auto shadow gap-3 pt-3">
         {sortedUsers.map((user: UserProp, index) => (
           <Link to={`/home/inbox/${user.user_id}`} key={index}>
             <UserBox User={user} />
             <div className="divider w-[80%] my-0 mx-auto opacity-30"></div>
-
           </Link>
         ))}
         

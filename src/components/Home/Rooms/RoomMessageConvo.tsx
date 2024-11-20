@@ -1,4 +1,4 @@
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConvoHeader from "./RoomConvoHeader";
 import { useEffect, useRef, useState } from "react";
@@ -139,12 +139,22 @@ const RoomMessageConvo = () => {
           onChange={handleMessageChange}
           className="input input-bordered w-full"
         />
+        <div className="flex flex-row gap-2" >
         <button
-          className="btn btn-ghost rounded-full text-2xl"
+          className="btn btn-ghost rounded-full text-3xl"
+          onClick={handleSendMessage}
+        >
+          <FontAwesomeIcon icon={faImage} />
+        </button>
+        
+        <button
+          className="btn btn-ghost rounded-full text-3xl"
           onClick={handleSendMessage}
         >
           <FontAwesomeIcon icon={faPaperPlane} />
         </button>
+        </div>
+        
       </div>
     </div>
   );
