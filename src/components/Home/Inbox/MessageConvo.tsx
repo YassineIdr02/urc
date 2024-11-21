@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import {
   getAllMessages,
   getMessagesAsync,
-  Message,
   sendMessage,
 } from "../../../features/messageSlice";
 import { useParams } from "react-router-dom";
