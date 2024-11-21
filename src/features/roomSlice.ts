@@ -32,7 +32,7 @@ export const getRoomsAsync = createAsyncThunk<RoomProp[]>(
         return response.data;
       } catch (error) {
         console.error("Failed to fetch rooms:", error);
-        throw error; // Let Redux handle the rejected state
+        throw error; 
       }
     }
   );

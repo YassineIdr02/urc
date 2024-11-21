@@ -14,24 +14,23 @@ import LoginLayout from "./Layouts/LoginLayout";
 
 function App() {
   window.Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
+    if (permission === "granted") {
       // OK
     }
-  })
+  });
 
   const sw = navigator.serviceWorker;
-if (sw != null) {
+  if (sw != null) {
     sw.onmessage = (event) => {
-        console.log("Got event from sw : " + event.data);
-    }
-}
+      console.log("Got event from sw : " + event.data);
+    };
+  }
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginLayout />} />
         <Route path="/home" element={<UserLayout />}>
-
           <Route path="inbox" element={<Inbox />}>
             <Route index element={<Navigate to="0" replace />} />
             <Route path=":id" element={<MessageConvo />} />
@@ -41,7 +40,6 @@ if (sw != null) {
             <Route index element={<Navigate to="1" replace />} />
             <Route path=":idRoom" element={<RoomMessageConvo />} />
           </Route>
-
         </Route>
       </Routes>
     </Router>

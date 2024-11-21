@@ -1,4 +1,4 @@
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConvoHeader from "./ConvoHeader";
 import { useEffect, useRef, useState } from "react";
@@ -13,18 +13,26 @@ import { useParams } from "react-router-dom";
 import { getUser, userState } from "../../../features/userSlice";
 
 const MessageConvo = () => {
+  const [file, setFile] = useState<File | null>(null);
   const [user, setUser] = useState({
     username: "",
     user_id: -1,
   });
 
-  const [newMessage, setNewMessage] = useState<Message>({
+  const [newMessage, setNewMessage] = useState<{
+    timestamp: number;
+    sender_id: number;
+    receiver_id: number;
+    receiver_external_id: number;
+    room_external_id: number[];
+    content: string;
+  }>({
     timestamp: Date.now(),
     sender_id: -1,
     receiver_id: -1,
+    receiver_external_id: -1,
+    room_external_id: [],
     content: "",
-    room_external_id : [],
-    receiver_external_id : -1
   });
 
   const { id } = useParams<{ id: string }>();
@@ -50,14 +58,19 @@ const MessageConvo = () => {
 
     if (id && user.user_id !== -1) {
       dispatch(
-        getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
+        getMessagesAsync({ 
+          receiver_id: parseInt(id), 
+          user_id: user.user_id 
+        })
       );
     }
   }, [dispatch, id, user.user_id]);
 
   const handleSendMessage = () => {
     if (newMessage.content !== "" && id) {
-      dispatch(sendMessage(newMessage));
+      
+      dispatch(sendMessage({ message: newMessage, file }));
+
       setNewMessage({
         timestamp: Date.now(),
         sender_id: user.user_id,
@@ -66,6 +79,8 @@ const MessageConvo = () => {
         room_external_id : [],
         content: "",
       });
+
+      setFile(null);
       if (id && user.user_id !== -1) {
         dispatch(
           getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
@@ -74,16 +89,35 @@ const MessageConvo = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+
+    if (parseInt(id || "-1")) {
+      setNewMessage((prevMessage) => ({
+        ...prevMessage,
+        content: "_",
+        receiver_id: parseInt(id || "-1"),
+        receiver_external_id: -1,
+        room_external_id : [],
+        sender_id: user.user_id,
+      }));
+    }
+  };
+
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (id)
-      setNewMessage({
+    if (id)  
+        setNewMessage({
         ...newMessage,
         content: e.target.value,
         receiver_id: parseInt(id),
         sender_id: user.user_id,
-        receiver_external_id : User?.external_id || -1
+        receiver_external_id : User?.external_id || -1,
+
       });
   };
+
 
   const sortedMessages = [...ConvoMessages].sort(
     (a, b) => a.timestamp - b.timestamp
@@ -111,7 +145,16 @@ const MessageConvo = () => {
                 message.sender_id === user.user_id ? "chat-end" : "chat-start"
               }`}
             >
-              <div className="chat-bubble">{message.content}</div>
+              <div className="chat-bubble">
+                {message.attachment && (
+                  <img
+                    src={message.attachment}
+                    alt={message.attachment}
+                    className="max-h-60 max-w-64"
+                  />
+                )}
+                {message.content}{" "}
+              </div>
 
               {index === sortedMessages.length - 1 && <div ref={scrollRef} />}
             </div>
@@ -127,12 +170,27 @@ const MessageConvo = () => {
           onChange={handleMessageChange}
           className="input input-bordered w-full"
         />
-        <button
-          className="btn btn-ghost rounded-full text-2xl"
-          onClick={handleSendMessage}
-        >
-          <FontAwesomeIcon icon={faPaperPlane} />
-        </button>
+        <div className="flex flex-row gap-2">
+          <button
+            className="btn btn-ghost rounded-full relative"
+            onClick={handleSendMessage}
+          >
+            <FontAwesomeIcon icon={faImage} className="z-10 text-3xl" />
+            <input
+              type="file"
+              id="upload"
+              onChange={handleFileChange}
+              className="absolute inset-0 opacity-0 hover:cursor-pointer w-full z-20"
+            />
+          </button>
+
+          <button
+            className="btn btn-ghost rounded-full text-3xl"
+            onClick={handleSendMessage}
+          >
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
+        </div>
       </div>
     </div>
   );

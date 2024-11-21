@@ -6,17 +6,14 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/hooks";
 import {
   getAllRoomMessages,
   getRoomMessagesAsync,
-  Message,
   sendRoomMessage,
 } from "../../../features/messageSlice";
 import { useParams } from "react-router-dom";
 import { getAllUsers, getUsers, userState } from "../../../features/userSlice";
 
 const RoomMessageConvo = () => {
-  const [user, setUser] = useState({
-    username: "",
-    user_id: -1,
-  });
+  const [file, setFile] = useState<File | null>(null);
+  const [user, setUser] = useState({ username: "", user_id: -1 });
   const id = sessionStorage.getItem("user_id");
   const userId = id ? parseInt(id) : -1;
   const Users = useAppSelector((state: { user: userState }) =>
@@ -28,9 +25,15 @@ const RoomMessageConvo = () => {
   }, []);
 
   const room_external_id = Users ? Users.map((user) => user.external_id) : [];
-  console.log(room_external_id);
 
-  const [newMessage, setNewMessage] = useState<Message>({
+  const [newMessage, setNewMessage] = useState<{
+    timestamp: number;
+    sender_id: number;
+    receiver_id: number;
+    receiver_external_id: number;
+    room_external_id: number[];
+    content: string;
+  }>({
     timestamp: Date.now(),
     sender_id: -1,
     receiver_id: -1,
@@ -49,9 +52,9 @@ const RoomMessageConvo = () => {
     const session_id = sessionStorage.getItem("user_id");
 
     if (session_username && session_id) {
-      setUser({
-        username: session_username,
-        user_id: parseInt(session_id),
+      setUser({ 
+        username: session_username, 
+        user_id: parseInt(session_id) 
       });
     }
 
@@ -66,14 +69,18 @@ const RoomMessageConvo = () => {
   }, [dispatch, idRoom, user.user_id]);
 
   const handleSendMessage = () => {
-    if (newMessage.content !== "" && idRoom) {
-      dispatch(sendRoomMessage(newMessage));
+    if ((newMessage.content !== "" || file) && idRoom) {
+      
+
+      dispatch(sendRoomMessage({ message: newMessage, file }));
+
       dispatch(
         getRoomMessagesAsync({
           receiver_id: parseInt(idRoom),
           user_id: user.user_id,
         })
       );
+
       setNewMessage({
         timestamp: Date.now(),
         sender_id: user.user_id,
@@ -82,19 +89,39 @@ const RoomMessageConvo = () => {
         room_external_id: [],
         content: "",
       });
+
+      setFile(null);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+
+      if (idRoom) {
+        setNewMessage((prevMessage) => ({
+          ...prevMessage,
+          content: "_",
+          receiver_id: parseInt(idRoom),
+          receiver_external_id: -1,
+          room_external_id,
+          sender_id: user.user_id,
+        }));
+      }
     }
   };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (idRoom)
-      setNewMessage({
-        ...newMessage,
-        content: e.target.value,
-        receiver_id: parseInt(idRoom),
-        receiver_external_id: -1,
-        room_external_id,
-        sender_id: user.user_id,
-      });
+    setNewMessage((prevMessage) => ({
+      ...prevMessage,
+      content: e.target.value,
+      receiver_id: parseInt(idRoom || "-1"),
+      receiver_external_id: -1,
+      room_external_id,
+      sender_id: user.user_id,
+      file: file || null,
+    }));
   };
 
   const sortedMessages = [...ConvoMessages].sort(
@@ -123,7 +150,16 @@ const RoomMessageConvo = () => {
                 message.sender_id === user.user_id ? "chat-end" : "chat-start"
               }`}
             >
-              <div className="chat-bubble">{message.content}</div>
+              <div className="chat-bubble">
+                {message.attachment && (
+                  <img
+                    src={message.attachment}
+                    alt={message.attachment}
+                    className="max-h-60 max-w-64"
+                  />
+                )}
+                {message.content}{" "}
+              </div>
 
               {index === sortedMessages.length - 1 && <div ref={scrollRef} />}
             </div>
@@ -139,22 +175,26 @@ const RoomMessageConvo = () => {
           onChange={handleMessageChange}
           className="input input-bordered w-full"
         />
-        <div className="flex flex-row gap-2" >
-        <button
-          className="btn btn-ghost rounded-full text-3xl"
-          onClick={handleSendMessage}
-        >
-          <FontAwesomeIcon icon={faImage} />
-        </button>
-        
-        <button
-          className="btn btn-ghost rounded-full text-3xl"
-          onClick={handleSendMessage}
-        >
-          <FontAwesomeIcon icon={faPaperPlane} />
-        </button>
+        <div className="flex flex-row gap-2">
+          <button
+            className="btn btn-ghost rounded-full relative"
+            onClick={handleSendMessage}
+          >
+            <FontAwesomeIcon icon={faImage} className="z-10 text-3xl" />
+            <input
+              type="file"
+              id="upload"
+              onChange={handleFileChange}
+              className="absolute inset-0 opacity-0 hover:cursor-pointer w-full z-20"
+            />
+          </button>
+          <button
+            className="btn btn-ghost rounded-full text-3xl"
+            onClick={handleSendMessage}
+          >
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
         </div>
-        
       </div>
     </div>
   );

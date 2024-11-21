@@ -11,7 +11,6 @@ export const beamsClient = new Client({
 const PusherClient = ({ children }: PusherClientProps) => {
   useEffect(() => {
     
-
     const sessionToken = sessionStorage.getItem("token");
     const sessionExternalId = sessionStorage.getItem("externalId") || "-1";
 

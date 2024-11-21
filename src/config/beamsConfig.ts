@@ -4,7 +4,6 @@ export const configureBeams = async (client: Client, externalId: string, token: 
     try {
         const currentUserId = await client.getUserId();
         if (currentUserId === externalId) {
-            console.log("User ID is already configured:", currentUserId);
             return;
         }
 

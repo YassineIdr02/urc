@@ -14,6 +14,7 @@ export interface Message {
   receiver_id: number;
   receiver_external_id: number;
   room_external_id: number[];
+  attachment?: string
 }
 
 interface getMessageProp {
@@ -40,7 +41,6 @@ const config = {
   },
 };
 
-// Helper function to extract error message
 const extractErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     return error.response?.data || error.message;
@@ -48,12 +48,25 @@ const extractErrorMessage = (error: unknown): string => {
   return String(error);
 };
 
-// Thunks for handling messages
 export const sendMessage = createAsyncThunk(
   "sendMessage/message",
-  async (message: Message, { rejectWithValue }) => {
+  async (
+    { message, file }: { message: Message; file: File | null },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post("/api/message", message, config);
+      const formData = new FormData();
+      formData.append("message", JSON.stringify(message));
+      if (file) {
+        formData.append("file", file);
+      }
+
+      const response = await axios.post("/api/message", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authentication": `Bearer ${sessionStorage.getItem("token")}`,
+        }
+      });
       return response.data;
     } catch (error: unknown) {
       console.error("Failed to send message:", error);
@@ -63,10 +76,24 @@ export const sendMessage = createAsyncThunk(
 );
 
 export const sendRoomMessage = createAsyncThunk(
-  "sendMessage/roomMessage",
-  async (message: Message, { rejectWithValue }) => {
+  "sendRoomMessage/roomMessage",
+  async (
+    { message, file }: { message: Message; file: File | null },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await axios.post("/api/roomMessages", message, config);
+      const formData = new FormData();
+      formData.append("message", JSON.stringify(message));
+      if (file) {
+        formData.append("file", file);
+      }
+
+      const response = await axios.post("/api/roomMessages", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authentication": `Bearer ${sessionStorage.getItem("token")}`,
+        }
+      });
       return response.data;
     } catch (error: unknown) {
       console.error("Failed to send room message:", error);
@@ -101,7 +128,7 @@ export const getRoomMessagesAsync = createAsyncThunk<Message[], getMessageProp>(
   }
 );
 
-// Slice for managing message state
+
 const messageSlice = createSlice({
   name: "message",
   initialState,
@@ -113,6 +140,12 @@ const messageSlice = createSlice({
       })
       .addCase(getRoomMessagesAsync.fulfilled, (state, action) => {
         state.roomMessages = action.payload;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.messages.push(action.payload);
+      })
+      .addCase(sendRoomMessage.fulfilled, (state, action) => {
+        state.roomMessages.push(action.payload);
       });
   },
 });
