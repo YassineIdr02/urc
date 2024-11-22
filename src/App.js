@@ -11,6 +11,7 @@ import UserLayout from "./Layouts/UserLayout";
 import RoomInbox from "./components/Home/Rooms/RoomInbox";
 import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
 import LoginLayout from "./Layouts/LoginLayout";
+import RequireAuth from "./Layouts/RequireAuth";
 import { useEffect } from "react";
 
 function App() {
@@ -21,14 +22,13 @@ function App() {
   });
 
   useEffect(() => {
-    // Assurez-vous que le service worker est disponible
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       const sw = navigator.serviceWorker;
-
+      console.log(sw);
       sw.onmessage = (event) => {
-        console.log('Got event from SW:', event.data);
-        const {title,message} = event.data; 
-        alert(`New Notification: ${title} - ${message}`);
+        console.log("Got event from SW:", event.data);
+        //const {title,message} = event.data;
+        // alert(`New Notification: ${title} - ${message}`);//+
       };
     }
   }, []);
@@ -37,17 +37,21 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LoginLayout />} />
-        <Route path="/home" element={<UserLayout />}>
-          <Route path="inbox" element={<Inbox />}>
-            <Route index element={<Navigate to="0" replace />} />
-            <Route path=":id" element={<MessageConvo />} />
-          </Route>
 
-          <Route path="rooms" element={<RoomInbox />}>
-            <Route index element={<Navigate to="1" replace />} />
-            <Route path=":idRoom" element={<RoomMessageConvo />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/home" element={<UserLayout />}>
+            <Route path="inbox" element={<Inbox />}>
+              <Route index element={<Navigate to="0" replace />} />
+              <Route path=":id" element={<MessageConvo />} />
+            </Route>
+
+            <Route path="rooms" element={<RoomInbox />}>
+              <Route index element={<Navigate to="1" replace />} />
+              <Route path=":idRoom" element={<RoomMessageConvo />} />
+            </Route>
           </Route>
         </Route>
+        
       </Routes>
     </Router>
   );
