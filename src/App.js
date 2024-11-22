@@ -11,6 +11,7 @@ import UserLayout from "./Layouts/UserLayout";
 import RoomInbox from "./components/Home/Rooms/RoomInbox";
 import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
 import LoginLayout from "./Layouts/LoginLayout";
+import { useEffect } from "react";
 
 function App() {
   window.Notification.requestPermission().then((permission) => {
@@ -19,12 +20,18 @@ function App() {
     }
   });
 
-  const sw = navigator.serviceWorker;
-  if (sw != null) {
-    sw.onmessage = (event) => {
-      console.log("Got event from sw : " + event.data);
-    };
-  }
+  useEffect(() => {
+    // Assurez-vous que le service worker est disponible
+    if ('serviceWorker' in navigator) {
+      const sw = navigator.serviceWorker;
+
+      sw.onmessage = (event) => {
+        console.log('Got event from SW:', event.data);
+        const {title,message} = event.data; 
+        alert(`New Notification: ${title} - ${message}`);
+      };
+    }
+  }, []);
 
   return (
     <Router>
