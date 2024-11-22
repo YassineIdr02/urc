@@ -13,34 +13,28 @@ import { getUser, userState } from "../../../features/userSlice";
 
 const MessageConvo = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [user, setUser] = useState({
-    username: "",
-    user_id: -1,
-  });
-
-  const [newMessage, setNewMessage] = useState<{
-    timestamp: number;
-    sender_id: number;
-    receiver_id: number;
-    receiver_external_id: number;
-    room_external_id: number[];
-    content: string;
-  }>({
-    timestamp: Date.now(),
-    sender_id: -1,
-    receiver_id: -1,
-    receiver_external_id: -1,
-    room_external_id: [],
-    content: "",
+  const [state, setState] = useState({
+    user: {
+      username: "",
+      user_id: -1,
+    },
+    newMessage: {
+      timestamp: Date.now(),
+      sender_id: -1,
+      receiver_id: -1,
+      receiver_external_id: -1,
+      room_external_id: [],
+      content: "",
+    },
   });
 
   const { id } = useParams<{ id: string }>();
-  const userId = id ? parseInt(id) : parseInt("-1");
+  const userId = id ? parseInt(id) : -1;
   const dispatch = useAppDispatch();
   const ConvoMessages = useAppSelector(getAllMessages);
   const User = useAppSelector((state: { user: userState }) =>
     getUser(state, userId)
-);
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -49,40 +43,48 @@ const MessageConvo = () => {
     const session_id = sessionStorage.getItem("user_id");
 
     if (session_username && session_id) {
-      setUser({
-        username: session_username,
-        user_id: parseInt(session_id),
-      });
+      setState((prevState) => ({
+        ...prevState,
+        user: {
+          username: session_username,
+          user_id: parseInt(session_id),
+        },
+      }));
     }
 
-    if (id && user.user_id !== -1) {
+    if (id && state.user.user_id !== -1) {
       dispatch(
-        getMessagesAsync({ 
-          receiver_id: parseInt(id), 
-          user_id: user.user_id 
+        getMessagesAsync({
+          receiver_id: parseInt(id),
+          user_id: state.user.user_id,
         })
       );
     }
-  }, [dispatch, id, user.user_id]);
+  }, [dispatch, id, state.user.user_id]);
 
   const handleSendMessage = () => {
-    if (newMessage.content !== "" && id) {
-      
-      dispatch(sendMessage({ message: newMessage, file }));
+    if (state.newMessage.content !== "" && id) {
+      dispatch(sendMessage({ message: state.newMessage, file }));
 
-      setNewMessage({
-        timestamp: Date.now(),
-        sender_id: user.user_id,
-        receiver_id: parseInt(id || "-1"),
-        receiver_external_id : -1,
-        room_external_id : [],
-        content: "",
-      });
+      setState((prevState) => ({
+        ...prevState,
+        newMessage: {
+          timestamp: Date.now(),
+          sender_id: state.user.user_id,
+          receiver_id: parseInt(id),
+          receiver_external_id: -1,
+          room_external_id: [],
+          content: "",
+        },
+      }));
 
       setFile(null);
-      if (id && user.user_id !== -1) {
+      if (id && state.user.user_id !== -1) {
         dispatch(
-          getMessagesAsync({ receiver_id: parseInt(id), user_id: user.user_id })
+          getMessagesAsync({
+            receiver_id: parseInt(id),
+            user_id: state.user.user_id,
+          })
         );
       }
     }
@@ -94,29 +96,32 @@ const MessageConvo = () => {
     }
 
     if (parseInt(id || "-1")) {
-      setNewMessage((prevMessage) => ({
-        ...prevMessage,
-        content: "_",
-        receiver_id: parseInt(id || "-1"),
-        receiver_external_id: -1,
-        room_external_id : [],
-        sender_id: user.user_id,
+      setState((prevState) => ({
+        ...prevState,
+        newMessage: {
+          ...prevState.newMessage,
+          content: "_",
+          receiver_id: parseInt(id || "-1"),
+          sender_id: state.user.user_id,
+        },
       }));
     }
   };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (id)  
-        setNewMessage({
-        ...newMessage,
-        content: e.target.value,
-        receiver_id: parseInt(id),
-        sender_id: user.user_id,
-        receiver_external_id : User?.external_id || -1,
-
-      });
+    if (id) {
+      setState((prevState) => ({
+        ...prevState,
+        newMessage: {
+          ...prevState.newMessage,
+          content: e.target.value,
+          receiver_id: parseInt(id),
+          sender_id: state.user.user_id,
+          receiver_external_id: User?.external_id || -1,
+        },
+      }));
+    }
   };
-
 
   const sortedMessages = [...ConvoMessages].sort(
     (a, b) => a.timestamp - b.timestamp
@@ -141,7 +146,9 @@ const MessageConvo = () => {
             <div
               key={index}
               className={`chat ${
-                message.sender_id === user.user_id ? "chat-end" : "chat-start"
+                message.sender_id === state.user.user_id
+                  ? "chat-end"
+                  : "chat-start"
               }`}
             >
               <div className="chat-bubble">
@@ -165,7 +172,7 @@ const MessageConvo = () => {
         <input
           type="text"
           placeholder="Type here..."
-          value={newMessage.content}
+          value={state.newMessage.content}
           onChange={handleMessageChange}
           className="input input-bordered w-full"
         />
@@ -179,7 +186,8 @@ const MessageConvo = () => {
               type="file"
               id="upload"
               onChange={handleFileChange}
-              className="absolute inset-0 opacity-0 hover:cursor-pointer w-full z-20"
+              className="absolute inset-0 opacity-0 hover:cursor-pointer w-full 
+                z-20"
             />
           </button>
 

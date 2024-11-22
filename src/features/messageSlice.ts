@@ -1,12 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface UserProp {
-  username: string;
-  last_login: string;
-  user_id: number;
-}
-
 export interface Message {
   timestamp: number;
   content: string;
@@ -14,7 +8,7 @@ export interface Message {
   receiver_id: number;
   receiver_external_id: number;
   room_external_id: number[];
-  attachment?: string
+  attachment?: string;
 }
 
 interface getMessageProp {
@@ -48,26 +42,30 @@ const extractErrorMessage = (error: unknown): string => {
   return String(error);
 };
 
+const sendMessageHelper = async (
+  url: string,
+  { message, file }: { message: Message; file: File | null }
+) => {
+  const formData = new FormData();
+  formData.append("message", JSON.stringify(message));
+  if (file) {
+    formData.append("file", file);
+  }
+
+  const response = await axios.post(url, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authentication: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  });
+  return response.data;
+};
+
 export const sendMessage = createAsyncThunk(
   "sendMessage/message",
-  async (
-    { message, file }: { message: Message; file: File | null },
-    { rejectWithValue }
-  ) => {
+  async (payload: { message: Message; file: File | null }, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      formData.append("message", JSON.stringify(message));
-      if (file) {
-        formData.append("file", file);
-      }
-
-      const response = await axios.post("/api/message", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authentication": `Bearer ${sessionStorage.getItem("token")}`,
-        }
-      });
-      return response.data;
+      return await sendMessageHelper("/api/message", payload);
     } catch (error: unknown) {
       console.error("Failed to send message:", error);
       return rejectWithValue(extractErrorMessage(error));
@@ -77,24 +75,9 @@ export const sendMessage = createAsyncThunk(
 
 export const sendRoomMessage = createAsyncThunk(
   "sendRoomMessage/roomMessage",
-  async (
-    { message, file }: { message: Message; file: File | null },
-    { rejectWithValue }
-  ) => {
+  async (payload: { message: Message; file: File | null }, { rejectWithValue }) => {
     try {
-      const formData = new FormData();
-      formData.append("message", JSON.stringify(message));
-      if (file) {
-        formData.append("file", file);
-      }
-
-      const response = await axios.post("/api/roomMessages", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Authentication": `Bearer ${sessionStorage.getItem("token")}`,
-        }
-      });
-      return response.data;
+      return await sendMessageHelper("/api/roomMessages", payload);
     } catch (error: unknown) {
       console.error("Failed to send room message:", error);
       return rejectWithValue(extractErrorMessage(error));
@@ -128,7 +111,6 @@ export const getRoomMessagesAsync = createAsyncThunk<Message[], getMessageProp>(
   }
 );
 
-
 const messageSlice = createSlice({
   name: "message",
   initialState,
@@ -150,10 +132,8 @@ const messageSlice = createSlice({
   },
 });
 
-export const getAllMessages = (state: { message: messageState }) =>
-  state.message.messages;
+export const getAllMessages = (state: { message: messageState }) => state.message.messages;
 
-export const getAllRoomMessages = (state: { message: messageState }) =>
-  state.message.roomMessages;
+export const getAllRoomMessages = (state: { message: messageState }) => state.message.roomMessages;
 
 export default messageSlice.reducer;
