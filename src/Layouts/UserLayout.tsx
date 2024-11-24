@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 
 const UserLayout = () => {
+  
   const [user, setUser] = useState<string>("");
 
   useEffect(() => {

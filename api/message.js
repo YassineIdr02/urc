@@ -77,7 +77,7 @@ export default async (request, response) => {
             notification: {
               title: user.username,
               body: message.content,
-              ico: "https://www.univ-brest.fr/themes/custom/ubo_parent/favicon.ico",
+              icon: "https://www.univ-brest.fr/themes/custom/ubo_parent/favicon.ico",
               deep_link: `http://localhost:3000/home/inbox/${sender_id}`,
             },
             data: {
