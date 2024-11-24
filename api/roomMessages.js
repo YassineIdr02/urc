@@ -80,7 +80,7 @@ export default async (req, res) => {
               title: user.username,
               body: message.content,
               icon: "https://www.univ-brest.fr/themes/custom/ubo_parent/favicon.ico",
-              deep_link: `http://localhost:3000/home/rooms/${receiver_id}`,
+              deep_link: `https://urc-yassine-idrissis-projects.vercel.app/home/rooms/${receiver_id}`,
             },
             data: {
               attachment: message.attachment,
