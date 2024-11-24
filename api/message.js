@@ -66,7 +66,8 @@ export default async (request, response) => {
 
       const beamsClient = new PushNotifications({
         instanceId: "875e7724-b0db-4bdf-b082-54a376631128",
-        secretKey: process.env.PUSHER_SECRET_KEY.toString(),
+        secretKey:
+          "955C9D57C12DCB37DFCBC128F83EF54232F2B223A2894524BBB5E2398B007187",
       });
 
       const publishResponse = await beamsClient.publishToUsers(

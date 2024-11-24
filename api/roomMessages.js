@@ -29,7 +29,9 @@ export default async (req, res) => {
         return res.status(500).json({ error: "Failed to parse form data" });
       }
 
-      const { receiver_id, content, sender_id, room_external_id } = JSON.parse(fields.message[0]);
+      const { receiver_id, content, sender_id, room_external_id } = JSON.parse(
+        fields.message[0]
+      );
 
       let attachment = null;
 
@@ -38,11 +40,11 @@ export default async (req, res) => {
         const buffer = await fs.promises.readFile(file.filepath);
         const blob = await put(file.originalFilename, buffer, {
           access: "public",
-          token: "vercel_blob_rw_f5udFipqsXD5NutQ_9jQQFLd4CPe48sIHjWF6dvpJFgEVzu",
+          token:
+            "vercel_blob_rw_f5udFipqsXD5NutQ_9jQQFLd4CPe48sIHjWF6dvpJFgEVzu",
         });
         attachment = blob.url;
       }
-
 
       if (!receiver_id || (!content && !attachment)) {
         return res.status(400).json({
@@ -65,8 +67,9 @@ export default async (req, res) => {
       );
 
       const beamsClient = new PushNotifications({
-        instanceId: process.env.PUSHER_INSTANCE_ID,
-        secretKey: process.env.PUSHER_SECRET_KEY,
+        instanceId: "875e7724-b0db-4bdf-b082-54a376631128",
+        secretKey:
+          "955C9D57C12DCB37DFCBC128F83EF54232F2B223A2894524BBB5E2398B007187",
       });
 
       const publishResponse = await beamsClient.publishToUsers(
