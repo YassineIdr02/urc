@@ -1,6 +1,5 @@
 import { useState, ChangeEvent, useRef, FormEvent } from "react";
 import { useAppDispatch } from "../../hooks/hooks";
-
 import { registerUser, RegisterUserProp } from "../../features/userSlice";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,11 +32,8 @@ const NewSignup: React.FC<NewSignupProps> = ({ showLoginForm, notify }) => {
   
     try {
       const resultAction = await dispatch(registerUser(user));
-      const { statusText } = unwrapResult(resultAction);
-      console.log(statusText);
-  
+      const { statusText } = unwrapResult(resultAction);  
       notify()
-
       setTimeout(() => {
         showLoginForm();
       }, 4000);

@@ -12,6 +12,7 @@ import RoomInbox from "./components/Home/Rooms/RoomInbox";
 import RoomMessageConvo from "./components/Home/Rooms/RoomMessageConvo";
 import LoginLayout from "./Layouts/LoginLayout";
 import RequireAuth from "./Layouts/RequireAuth";
+import NotFound from "./Layouts/NotFound";
 import { useEffect } from "react";
 
 function App() {
@@ -51,7 +52,7 @@ function App() {
             </Route>
           </Route>
         </Route>
-        
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
